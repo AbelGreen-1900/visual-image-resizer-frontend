@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Resize images online for free with live preview. Upload from your device or URL, enlarge small pixel images up to 3x, and export in PNG, JPG, or WebP formats. Fast, intuitive, and accurate image resizing.">
+   
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="shortcut icon" href="/favicon-48x48.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon 180x180.png">
+
+    <title>Free Online Image Resizer with Live Preview & 3x Enlargement | PNG, JPG, WebP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4; /* Keep this light for default example */
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-section, .output-section, .download-section {
+            margin-bottom: 25px; /* Ensures spacing between main sections */
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #fafafa;
+            position: relative; 
+            padding-top: 30px; 
+        }
+        
+        /* Consistent label styling for "Upload Image:", "Load Image from URL:", "Output Format:" */
+        .input-group label, .download-section .control-group label {
+            margin-bottom: 5px;
+            font-weight: bold; 
+            color: #555;
+            text-align: left;
+            display: block; /* Ensures label takes its own line */
+            margin-left: 10px; 
+        }
+        
+        /* Specific positioning for labels acting as section titles */
+        .important-label {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #0056b3;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            display: block;
+            position: absolute; 
+            top: 0; 
+            left: 15px; /* Starts at the section's padding edge */
+            transform: translateY(-50%); 
+            background-color: #fafafa; 
+            padding: 0 10px; /* Creates the visual offset for its text */
+            z-index: 1; 
+            white-space: nowrap; 
+        }
+
+        /* Input group general styling for file/text inputs */
+        .input-group {
+            margin-bottom: 15px;
+            position: relative; /* For absolute positioning of urlInputPrompt */
+        }
+
+        input[type="file"], input[type="text"] {
+            display: block; /* Default to block, but will be overridden by flex item styles */
+            width: calc(100% - 24px); /* Account for padding */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-left: 10px; /* Align input fields with the labels */
+            box-sizing: border-box; /* Ensure padding/border are included in width */
+        }
+        
+        /* Specific styling for URL input and button to be side-by-side */
+        .url-input-elements {
+            display: flex;
+            gap: 10px;
+            margin-left: 10px;
+            width: calc(100% - 20px);
+        }
+        .url-input-elements input[type="text"] {
+            flex-grow: 1; /* Input takes up available space */
+            width: auto; /* Override default width */
+            margin-left: 0; /* Reset previous margin-left */
+        }
+        .url-input-elements button {
+            flex-shrink: 0; /* Button does not shrink */
+            margin-top: 0; /* Reset default button margin-top */
+            margin-left: 0; /* Reset previous button margin-left */
+            /* Inherit button styles from below, but reset margins */
+        }
+
+
+        /* Enlarge pixel input boxes */
+        .size-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            margin-left: 10px;
+            width: calc(100% - 10px);
+            position: relative;
+        }
+
+        /* 自定义输入框样式 */
+        .size-input-group input[type="number"] {
+            flex: 1;
+            width: 100%; /* 确保输入框占满容器宽度 */
+            padding: 12px;
+            padding-right: 40px; /* 为内部按钮留出空间 */
+            font-size: 1.1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-left: 0;
+            box-sizing: border-box;
+            -moz-appearance: textfield !important; /* Firefox */
+            -webkit-appearance: none !important; /* Chrome, Safari, Edge */
+            appearance: none !important; /* 标准 */
+        }
+
+        /* 确保移除所有浏览器默认的上下箭头 */
+        .size-input-group input[type="number"]::-webkit-inner-spin-button,
+        .size-input-group input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none !important;
+            margin: 0;
+        }
+
+        /* 自定义增减按钮容器 */
+        .size-input-group .number-buttons {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 30px;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            pointer-events: none; /* 防止按钮容器影响输入框的点击 */
+        }
+
+        /* 增减按钮样式 */
+        .size-input-group .number-button {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+            pointer-events: auto; /* 恢复按钮的点击事件 */
+            height: 50%; /* 每个按钮占输入框高度的一半 */
+        }
+
+        .size-input-group .number-button:first-child {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .size-input-group .number-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* 箭头图标 */
+        .size-input-group .number-button::before {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+        }
+
+        .size-input-group .number-button.increase::before {
+            border-bottom: 5px solid #666;
+        }
+
+        .size-input-group .number-button.decrease::before {
+            border-top: 5px solid #666;
+        }
+
+        .size-input-group .number-button:hover::before {
+            border-bottom-color: #004d99;
+            border-top-color: #004d99;
+        }
+
+        .size-input-group .number-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .size-input-group .number-button:disabled::before {
+            border-bottom-color: #999;
+            border-top-color: #999;
+        }
+
+        /* 确保输入框组有正确的定位 */
+        .size-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            margin-left: 10px;
+            width: calc(100% - 10px);
+        }
+
+        /* 确保每个输入框都有正确的定位 */
+        .size-input-group > div {
+            position: relative;
+            flex: 1;
+            min-width: 200px; /* 确保输入框有最小宽度 */
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .slider-group {
+            margin-bottom: 20px;
+            margin-left: 10px; /* Align sliders with other content */
+            width: calc(100% - 10px); /* Adjust width for margin */
+        }
+        .slider-title {
+            font-weight: bold;
+           margin-bottom: 2px;
+           margin-left: 0;
+        }
+       .slider-labels {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.95em;
+          color: #666;
+          margin-bottom: 2px;
+          margin-left: 0;
+          margin-right: 0;
+      }
+     .slider-labels .slider-min,
+     .slider-labels .slider-max {
+          min-width: 32px;
+      }
+        .warning-text {
+            color: #d9534f;
+            font-size: 0.85em;
+            margin-top: 5px;
+            margin-left: 10px; /* Align text with other content */
+        }
+        .info-text {
+            color: #337ab7;
+            font-size: 0.85em;
+            margin-top: 5px;
+            margin-left: 10px; /* Align text with other content */
+        }
+        
+        .preview-area {
+            text-align: center;
+            margin-top: 20px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        #previewCanvas {
+            max-width: 100%; 
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            border: 1px solid #ddd;
+        }
+        #previewCanvas[width]:not([width="0"]) {
+            width: 100%;
+            height: 100%;
+        }
+
+        #currentDimensions {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 10px;
+            margin-left: 10px; /* Align text with other content */
+            text-align: left; /* Ensure it's left-aligned */
+        }
+        /* Loading and Error messages inside preview-area */
+        .preview-area .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.95); 
+            padding: 10px 15px;
+            border-radius: 5px;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2); 
+            white-space: nowrap; 
+        }
+        /* Full-size preview box (now solid border, interactive) */
+        #fullSizePreviewBox {
+            margin-top: 20px; /* Space from preview area */
+            margin-bottom: 25px; /* Space to the next main section */
+            padding: 15px;
+            border: 2px solid #007bff; /* Solid default border */
+            border-radius: 5px;
+            background-color: #eaf5ff; /* Default background */
+            cursor: pointer;
+            text-align: center;
+            color: #007bff; /* Default text color */
+            font-weight: bold;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Add color transition */
+        }
+        /* Hover styles optimized for visibility on all themes */
+        #fullSizePreviewBox:hover {
+            background-color: #a0c4ff; /* 更飽和、明顯的淺藍色背景 */
+            border-color: #1a73e8;    /* 更亮、更活力的藍色邊框 */
+            color: #ffffff;           /* 白色文字，最大對比度 */
+        }
+        /* Ensure P tags within the box also inherit or change color */
+        #fullSizePreviewBox:hover p { 
+            color: #ffffff;           /* 確保 P 標籤也變為白色文字 */
+        }
+
+        #fullSizePreviewBox p {
+            margin: 0;
+            padding: 5px 0;
+        }
+        #fullSizePreviewThumbnail {
+            max-width: 100px;
+            max-height: 100px;
+            margin-bottom: 10px;
+            display: none;
+            border: 1px solid #ccc;
+            object-fit: contain;
+        }
+
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px; /* Space from section labels (like Output Format) */
+        }
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        /* Load Image button styling */
+        #loadImageFromUrl {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px; 
+            border: 1px solid #0056b3; 
+            border-radius: 4px; 
+            font-size: 1em;
+            /* Removed flex-specific styling as it's now in .url-input-elements */
+        }
+        #loadImageFromUrl:hover {
+            background-color: #0056b3;
+            border-color: #003d80;
+        }
+
+        /* Make download button more prominent */
+        #downloadImage {
+            background-color: #28a745;
+            color: white; 
+            padding: 15px 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(40,167,69,0.2);
+            width: auto;
+            margin-left: auto;
+            margin-right: 0;
+            border: 2px solid #1a7e32; 
+        }
+        #downloadImage:hover {
+            background-color: #218838;
+            box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+            border-color: #15662a; 
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            margin-left: 10px; /* Align select box with other inputs/labels */
+            width: calc(100% - 10px); /* Adjust for margin */
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-left: 10px; /* Align tab buttons with other content */
+        }
+        .tab-button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background-color: #f0f0f0;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin-right: 5px;
+            font-weight: bold;
+            color: #666;
+        }
+        .tab-button.active {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-bottom: none;
+            color: #333;
+        }
+        .tab-content {
+            display: none;
+            padding-top: 10px; 
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Checkbox styling for sliders */
+        .slider-control-checkbox {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            color: #333;
+            margin-left: 10px; /* Align checkbox with other content */
+        }
+        .slider-control-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+            width: auto;
+            margin-bottom: 0;
+            vertical-align: middle; 
+            width: 18px; 
+            height: 18px;
+        }
+        .slider-control-checkbox label {
+            display: inline-block;
+            margin-bottom: 0;
+            line-height: 1.2;
+        }
+        
+        /* Percentage display position */
+        #currentPercentage {
+            text-align: left; /* Align to left */
+            font-weight: bold; 
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            color: #007bff;
+            margin-left: 10px; /* Align text with other content */
+        }
+
+        /* Custom Scrollbar Styles for the new preview window */
+        ::-webkit-scrollbar {
+            width: 12px; 
+            height: 12px; 
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 10px;
+            border: 2px solid #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        html {
+            scrollbar-width: thin; 
+            scrollbar-color: #888 #f1f1f1; 
+        }
+
+        /* START OF CHANGE 1: URL Input Prompt position - below the input box */
+        #urlInputPrompt {
+            position: absolute; /* Position relative to .input-group */
+            top: calc(100% + 5px); /* 5px below the bottom of the parent .input-group */
+            left: 10px; /* Aligned with other inputs' left margin */
+            width: calc(100% - 20px); /* Take full width minus horizontal padding/margins */
+            transform: none;
+            max-width: none; /* Fit the length of the parent .input-group */
+            white-space: normal; /* Auto enter available */
+            font-size: 0.85em; /* Slightly smaller for hint */
+            padding: 6px 10px; /* Smaller padding */
+            line-height: 1.4; /* Better readability for multi-line */
+            background-color: #ffffcc;
+            border: 1px solid #e0e000;
+            border-radius: 4px;
+            color: #333;
+            z-index: 20;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-sizing: border-box; /* Include padding/border in width calculation */
+        }
+        /* END OF CHANGE 1 */
+
+
+        /* Adjustments for the download section's flexbox */
+        .download-section .controls {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 0; /* Label now has its own margin-bottom */
+            margin-left: 0; /* Reset for flex container */
+        }
+        .download-section .control-group {
+            flex: 1;
+            min-width: 180px;
+            margin-left: 0; /* Reset for flex item */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .controls {
+                flex-direction: column;
+            }
+            .control-group {
+                min-width: unset;
+                width: 100%;
+            }
+            /* Adjust padding for sections on small screens */
+            .input-section, .output-section, .download-section {
+                padding-top: 25px; 
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            .important-label {
+                left: 10px; 
+            }
+            /* Adjust label/input margin-left for smaller screens */
+            .input-group label, .download-section .control-group label,
+            input[type="file"], select,
+            .size-input-group, .slider-group, .slider-control-checkbox,
+            #currentPercentage, .warning-text, .info-text, #currentDimensions {
+                margin-left: 0;
+            }
+            .size-input-group {
+                width: 100%; /* Take full width on small screens */
+            }
+            input[type="file"], select {
+                width: 100%; /* Take full width on small screens */
+            }
+            /* Adjustments for url-input-elements on small screens */
+            .url-input-elements {
+                flex-direction: column; /* Stack items vertically on small screens */
+                align-items: flex-start; /* Align to left when stacked */
+                width: 100%; /* Take full width */
+                margin-left: 0;
+                gap: 5px; /* Smaller gap when stacked */
+            }
+            .url-input-elements input[type="text"] {
+                width: 100%; /* Full width when stacked */
+            }
+            .url-input-elements button {
+                width: 100%; /* Full width when stacked */
+            }
+            /* URL prompt should still be below, but might need margin adjustments if parent changes */
+            #urlInputPrompt {
+                position: static; /* Let it flow naturally in column layout */
+                margin-top: 5px;
+                margin-left: 0;
+                width: 100%;
+                max-width: 100%; /* Allow to take full width */
+            }
+        }
+
+        /* New CSS styles */
+        .size-input-group .number-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .size-input-group .number-button.disabled::before {
+            border-bottom-color: #999;
+            border-top-color: #999;
+        }
+
+        /* 添加提示框样式 */
+        .tooltip {
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Visual Image Resizer</h1>
+
+        <div class="input-section">
+            <label class="important-label">Import Image:</label>
+            <div class="input-group">
+                <label for="imageUpload">Upload Image:</label>
+                <input type="file" id="imageUpload" accept="image/*">
+            </div>
+            
+            <p style="text-align: center; margin: 10px 0;">OR</p>
+
+            <div class="input-group"> 
+                <label for="imageUrlInput">Load Image from URL:</label>
+                <div class="url-input-elements"> 
+                    <input type="text" id="imageUrlInput" placeholder="Enter image URL">
+                    <button id="loadImageFromUrl">Load Image</button>
+                </div>
+                <div id="urlInputPrompt" style="display:none;">
+                    Please ensure the image URL is directly accessible and does not require authentication or CORS headers.
+                </div>
+                </div>
+        </div>
+
+        <div class="preview-area">
+            <canvas id="previewCanvas"></canvas>
+            <p id="loadingMessage" class="message" style="display:none; color: #007bff;">Loading image...</p>
+            <p id="errorMessage" class="message" style="display:none; color: #d9534f;"></p>
+        </div>
+        <p id="currentDimensions">Original Dimensions: 0x0 | Resized: 0x0</p>
+
+
+        <div id="fullSizePreviewBox" style="display: none;">
+            <img id="fullSizePreviewThumbnail" alt="Full size preview thumbnail">
+            <p>Click here to open full-size preview of the <strong>resized image</strong> in a new tab.</p>
+            <p>(May take a moment for very large images)</p>
+        </div>
+
+        <div class="output-section">
+            <label class="important-label">Adjust Dimensions:</label>
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="pixelTab">By Pixels</button>
+                <button class="tab-button" data-tab="percentageTab">By Percentage</button>
+            </div>
+
+            <div id="pixelTab" class="tab-content active">
+                <div class="size-input-group">
+                    <div>
+                        <input type="number" id="newWidth" placeholder="New Width (px)" min="1">
+                        <div class="number-buttons">
+                            <button type="button" class="number-button increase" data-input="newWidth"></button>
+                            <button type="button" class="number-button decrease" data-input="newWidth"></button>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="number" id="newHeight" placeholder="New Height (px)" min="1">
+                        <div class="number-buttons">
+                            <button type="button" class="number-button increase" data-input="newHeight"></button>
+                            <button type="button" class="number-button decrease" data-input="newHeight"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-control-checkbox"> <input type="checkbox" id="aspectRatioLock" checked>
+                    <label for="aspectRatioLock">Lock Aspect Ratio</label>
+                </div>
+                 <p class="warning-text" id="pixelScaleWarning">
+                    Warning: Scaling above 100% can significantly impact image quality (pixelation/blur). Maximum output pixel dimension is 4000px or 3x original (whichever is smaller).
+                </p>
+            </div>
+
+            <div id="percentageTab" class="tab-content">
+                <p id="currentPercentage">Current Scale: Width 100% | Height 100%</p> 
+
+                <div class="slider-control-checkbox">
+                    <input type="checkbox" id="lockAspectRatioPercentage" checked>
+                    <label for="lockAspectRatioPercentage">Lock Aspect Ratio</label>
+                </div>
+
+                <div class="slider-group">
+                     <div class="slider-title">Width Scale:</div>
+                     <div class="slider-labels">
+                             <span class="slider-min">1%</span>
+                             <span class="slider-max" id="widthMaxPercentage">100%</span>
+                    </div>
+                    <input type="range" id="widthScaleSlider" min="1" max="300" step="0.1" value="100">
+                </div>
+
+                <div class="slider-group">
+                     <div class="slider-title">Height Scale:</div>
+                     <div class="slider-labels">
+                             <span class="slider-min">1%</span>
+                             <span class="slider-max" id="heightMaxPercentage">100%</span>
+                    </div>
+                    <input type="range" id="heightScaleSlider" min="1" max="300" step="0.1" value="100">
+                </div>
+
+                <p class="warning-text" id="scaleWarning">
+                    Warning: Scaling above 100% can significantly impact image quality (pixelation/blur). Maximum output pixel dimension is 4000px or 3x original (whichever is smaller).
+                </p>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <label class="important-label" for="outputFormat">Download Image:</label>
+            <div class="controls">
+                <div class="control-group">
+                    <label for="outputFormat">Output Format:</label> 
+                    <select id="outputFormat">
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                </div>
+                <button id="downloadImage">Download Resized Image</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const imageUrlInput = document.getElementById('imageUrlInput');
+        const urlInputPrompt = document.getElementById('urlInputPrompt');
+        const loadImageFromUrlBtn = document.getElementById('loadImageFromUrl');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const ctx = previewCanvas.getContext('2d');
+        const currentDimensionsText = document.getElementById('currentDimensions');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        const fullSizePreviewBox = document.getElementById('fullSizePreviewBox');
+        const fullSizePreviewThumbnail = document.getElementById('fullSizePreviewThumbnail');
+
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const pixelTab = document.getElementById('pixelTab');
+        const percentageTab = document.getElementById('percentageTab');
+
+        const newWidthInput = document.getElementById('newWidth');
+        const newHeightInput = document.getElementById('newHeight');
+        const aspectRatioLock = document.getElementById('aspectRatioLock');
+        const pixelScaleWarning = document.getElementById('pixelScaleWarning'); 
+
+        const widthScaleSlider = document.getElementById('widthScaleSlider');
+        const heightScaleSlider = document.getElementById('heightScaleSlider');
+        const lockAspectRatioPercentage = document.getElementById('lockAspectRatioPercentage');
+        const widthMaxPercentage = document.getElementById('widthMaxPercentage');
+        const heightMaxPercentage = document.getElementById('heightMaxPercentage');
+        const scaleWarning = document.getElementById('scaleWarning');
+
+        const currentPercentageText = document.getElementById('currentPercentage');
+
+        const outputFormatSelect = document.getElementById('outputFormat');
+        const downloadImageBtn = document.getElementById('downloadImage');
+
+        let originalImage = null;
+        let originalWidth = 0;
+        let originalHeight = 0;
+        let currentWidthScale = 100;
+        let currentHeightScale = 100;
+
+        const MAX_OUTPUT_DIMENSION_ENLARGE = 4000; 
+        const MAX_SCALE_FACTOR_TRIPLE = 3; 
+        const MIN_PIXEL_DIMENSION = 1; 
+
+        // --- Event Listeners ---
+
+        document.addEventListener('click', (event) => {
+            // Hide URL input prompt if click is outside URL input, button, or the prompt itself
+            if (urlInputPrompt.style.display === 'block') {
+                const clickedElement = event.target;
+                const urlInputGroup = document.querySelector('.input-group'); // Parent of input and prompt
+                // Ensure the clicked element is not part of the URL input or the prompt itself
+                if (!(urlInputInput.contains(clickedElement) || loadImageFromUrlBtn.contains(clickedElement) || urlInputPrompt.contains(clickedElement))) {
+                    urlInputPrompt.style.display = 'none';
+                }
+            }
+            // Hide preview area error messages if click is outside preview area
+            if (errorMessage.style.display === 'block') {
+                const clickedElement = event.target;
+                const isInsidePreviewArea = previewCanvas.contains(clickedElement) || 
+                                            loadingMessage.contains(clickedElement) || 
+                                            errorMessage.contains(clickedElement) ||
+                                            currentDimensionsText.contains(clickedElement) ||
+                                            fullSizePreviewBox.contains(clickedElement); 
+                if (!isInsidePreviewArea) {
+                    hideMessages();
+                }
+            }
+        });
+
+        imageUrlInput.addEventListener('focus', () => {
+            urlInputPrompt.style.display = 'block';
+        });
+        imageUrlInput.addEventListener('blur', () => {
+            // Delay hiding to allow clicks on the prompt itself, handled by global click listener
+            // urlInputPrompt.style.display = 'none'; 
+        });
+        loadImageFromUrlBtn.addEventListener('focus', () => {
+             urlInputPrompt.style.display = 'block';
+        });
+
+
+        imageUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        });
+
+        loadImageFromUrlBtn.addEventListener('click', async () => {
+            const url = imageUrlInput.value.trim();
+            if (url) {
+                try {
+                    // 使用代理服务器加载图片
+                    const proxyUrl = `http://localhost:3000/proxy-image?url=${encodeURIComponent(url)}`;
+                    loadImage(proxyUrl);
+                } catch (error) {
+                    displayMessage(errorMessage, 'Failed to load image from URL. Please check the URL and try again.', true);
+                }
+            } else {
+                displayMessage(errorMessage, 'Please enter an image URL.', true); 
+            }
+            urlInputPrompt.style.display = 'none'; 
+        });
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(button.dataset.tab).classList.add('active');
+
+                if (button.dataset.tab === 'pixelTab') {
+                    if (originalImage) {
+                        // 从百分比计算像素值
+                        const newWidth = Math.round((currentWidthScale / 100) * originalWidth);
+                        const newHeight = Math.round((currentHeightScale / 100) * originalHeight);
+                        
+                        // 更新像素输入框的值
+                        newWidthInput.value = newWidth;
+                        newHeightInput.value = newHeight;
+                        
+                        // 更新限制和警告
+                        updatePixelInputLimits(newWidth, newHeight);
+                        pixelScaleWarning.style.display = 'block';
+                    }
+                } else { // percentageTab
+                    // 计算当前像素值对应的百分比
+                    if (originalImage && originalWidth > 0 && originalHeight > 0) {
+                        const currentWidth = parseFloat(newWidthInput.value);
+                        const currentHeight = parseFloat(newHeightInput.value);
+                        
+                        // 计算百分比（保留一位小数）
+                        currentWidthScale = (currentWidth / originalWidth) * 100;
+                        currentHeightScale = (currentHeight / originalHeight) * 100;
+                        
+                        // 更新滑块值
+                        widthScaleSlider.value = currentWidthScale.toFixed(1);
+                        heightScaleSlider.value = currentHeightScale.toFixed(1);
+                        
+                        // 更新显示
+                        updatePercentageSliders();
+                    }
+                    scaleWarning.style.display = 'none';
+                }
+                updatePreview();
+            });
+        });
+
+        // Event listener for pixel input changes (both width and height)
+        [newWidthInput, newHeightInput].forEach(input => {
+            input.addEventListener('input', () => {
+                let val = parseFloat(input.value);
+                if (isNaN(val) || val < MIN_PIXEL_DIMENSION) {
+                    val = MIN_PIXEL_DIMENSION;
+                }
+                input.value = Math.round(val); 
+
+                // If aspect ratio lock is on, adjust the other dimension and then re-evaluate limits
+                if (aspectRatioLock.checked && originalWidth > 0 && originalHeight > 0) {
+                    let newWidthVal = parseFloat(newWidthInput.value);
+                    let newHeightVal = parseFloat(newHeightInput.value);
+
+                    if (input.id === 'newWidth') {
+                        if (!isNaN(newWidthVal) && newWidthVal > 0) {
+                             newHeightVal = (newWidthVal / originalWidth) * originalHeight;
+                             newHeightInput.value = Math.round(newHeightVal);
+                        }
+                    } else { // input.id === 'newHeight'
+                        if (!isNaN(newHeightVal) && newHeightVal > 0) {
+                             newWidthVal = (newHeightVal / originalHeight) * originalWidth;
+                             newWidthInput.value = Math.round(newWidthVal);
+                        }
+                    }
+                    updatePixelInputLimits(parseFloat(newWidthInput.value), parseFloat(newHeightInput.value));
+                } else {
+                    // If no aspect ratio lock, just update limits for the current input
+                    updatePixelInputLimits(parseFloat(newWidthInput.value), parseFloat(newHeightInput.value));
+                }
+                updatePreview();
+            });
+        });
+
+        widthScaleSlider.addEventListener('input', () => {
+            currentWidthScale = parseFloat(widthScaleSlider.value);
+            if (lockAspectRatioPercentage.checked) {
+                currentHeightScale = currentWidthScale;
+                heightScaleSlider.value = currentHeightScale.toFixed(1);
+            }
+            updatePercentageSliders();
+            updatePreview();
+        });
+
+        heightScaleSlider.addEventListener('input', () => {
+            currentHeightScale = parseFloat(heightScaleSlider.value);
+            if (lockAspectRatioPercentage.checked) {
+                currentWidthScale = currentHeightScale;
+                widthScaleSlider.value = currentWidthScale.toFixed(1);
+            }
+            updatePercentageSliders();
+            updatePreview();
+        });
+
+        lockAspectRatioPercentage.addEventListener('change', () => {
+            if (lockAspectRatioPercentage.checked) {
+                currentHeightScale = currentWidthScale;
+                heightScaleSlider.value = currentHeightScale.toFixed(1);
+                updatePercentageSliders();
+                updatePreview();
+            }
+        });
+
+        downloadImageBtn.addEventListener('click', () => {
+            if (!originalImage) {
+                displayMessage(errorMessage, 'Please load an image first.');
+                return;
+            }
+            downloadImage();
+        });
+
+        fullSizePreviewBox.addEventListener('click', () => {
+            if (!originalImage) {
+                displayMessage(errorMessage, 'Please load an image first before opening full-size preview.', true);
+                return;
+            }
+            openFullSizePreview();
+        });
+
+
+        // --- Functions ---
+
+        function displayMessage(element, message, isError = true) {
+            element.textContent = message;
+            element.style.display = 'block';
+            element.style.color = isError ? '#d9534f' : '#007bff';
+        }
+
+        function hideMessages() {
+            loadingMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        function loadImage(source) {
+            hideMessages();
+            displayMessage(loadingMessage, 'Loading image...', false);
+            originalImage = new Image();
+            originalImage.onload = () => {
+                hideMessages();
+                originalWidth = originalImage.naturalWidth;
+                originalHeight = originalImage.naturalHeight;
+
+                currentDimensionsText.textContent = `Original Dimensions: ${originalWidth}x${originalHeight}px | Resized: ${originalWidth}x${originalHeight}px`;
+
+                newWidthInput.value = originalWidth;
+                newHeightInput.value = originalHeight;
+
+                currentWidthScale = 100;
+                currentHeightScale = 100;
+                widthScaleSlider.value = 100;
+                heightScaleSlider.value = 100;
+                updatePercentageSliders();
+                // Pass current values to updatePixelInputLimits to properly calculate limits and apply classes
+                updatePixelInputLimits(originalWidth, originalHeight); 
+
+                // 重新初始化箭头按钮
+                setupArrowButtons();
+
+                updatePreview();
+                enableControls();
+                fullSizePreviewBox.style.display = 'block';
+                updateFullSizePreviewThumbnail();
+            };
+            originalImage.onerror = () => {
+                hideMessages();
+                displayMessage(errorMessage, 'Failed to load image. Please check the file or URL.', true);
+                disableControls();
+                fullSizePreviewBox.style.display = 'none';
+            };
+
+            if (source instanceof File) {
+                const reader = new FileReader();
+                reader.onload = (e) => originalImage.src = e.target.result;
+                reader.readAsDataURL(source);
+            } else if (typeof source === 'string') {
+                originalImage.crossOrigin = 'anonymous'; 
+                originalImage.src = source;
+            }
+        }
+
+        function enableControls() {
+            newWidthInput.disabled = false;
+            newHeightInput.disabled = false;
+            aspectRatioLock.disabled = false; 
+            widthScaleSlider.disabled = false;
+            heightScaleSlider.disabled = false;
+            outputFormatSelect.disabled = false;
+            downloadImageBtn.disabled = false;
+            tabButtons.forEach(btn => btn.disabled = false);
+        }
+
+        function disableControls() {
+            newWidthInput.disabled = true;
+            newHeightInput.disabled = true;
+            aspectRatioLock.disabled = true; 
+            widthScaleSlider.disabled = true;
+            heightScaleSlider.disabled = true;
+            outputFormatSelect.disabled = true;
+            downloadImageBtn.disabled = true;
+            tabButtons.forEach(btn => btn.disabled = true);
+            
+            previewCanvas.width = 1;
+            previewCanvas.height = 1;
+            ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            
+            currentDimensionsText.textContent = `Original Dimensions: 0x0 | Resized: 0x0`;
+            fullSizePreviewBox.style.display = 'none';
+        }
+
+        /**
+         * Calculates and sets the max value for pixel input fields, considering
+         * global limits, 3x original, and aspect ratio lock.
+         * Also updates the arrow visibility based on these limits.
+         * @param {number} currentDesiredWidth - The width the user is currently trying to achieve (or derived from height).
+         * @param {number} currentDesiredHeight - The height the user is currently trying to achieve (or derived from width).
+         */
+        function updatePixelInputLimits(currentDesiredWidth, currentDesiredHeight) {
+            if (!originalImage || originalWidth === 0 || originalHeight === 0) return;
+
+            let calculatedMaxWidth;
+            let calculatedMaxHeight;
+
+            // Determine effective maximum for width: min(global limit, 3x original)
+            calculatedMaxWidth = Math.min(MAX_OUTPUT_DIMENSION_ENLARGE, originalWidth * MAX_SCALE_FACTOR_TRIPLE);
+            // If original dimension is already over MAX_OUTPUT_DIMENSION_ENLARGE, it becomes the limit (no further enlargement)
+            if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                calculatedMaxWidth = originalWidth;
+            }
+
+            // Determine effective maximum for height: min(global limit, 3x original)
+            calculatedMaxHeight = Math.min(MAX_OUTPUT_DIMENSION_ENLARGE, originalHeight * MAX_SCALE_FACTOR_TRIPLE);
+            if (originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                calculatedMaxHeight = originalHeight;
+            }
+
+            // Apply aspect ratio lock constraints based on *current desired values*
+            if (aspectRatioLock.checked) {
+                const ratio = originalWidth / originalHeight;
+
+                // Check if desired width would cause theoretical height to exceed its limit
+                const theoreticalHeightFromDesiredWidth = currentDesiredWidth / ratio;
+                if (theoreticalHeightFromDesiredWidth > calculatedMaxHeight + 0.99) {
+                    calculatedMaxWidth = Math.min(calculatedMaxWidth, Math.floor(calculatedMaxHeight * ratio));
+                }
+
+                // Check if desired height would cause theoretical width to exceed its limit
+                const theoreticalWidthFromDesiredHeight = currentDesiredHeight * ratio;
+                if (theoreticalWidthFromDesiredHeight > calculatedMaxWidth + 0.99) {
+                    calculatedMaxHeight = Math.min(calculatedMaxHeight, Math.floor(calculatedMaxWidth / ratio));
+                }
+
+                // 如果当前值超过限制，自动调整
+                const currentWidth = parseFloat(newWidthInput.value);
+                const currentHeight = parseFloat(newHeightInput.value);
+
+                if (currentWidth > calculatedMaxWidth) {
+                    newWidthInput.value = Math.round(calculatedMaxWidth);
+                    newHeightInput.value = Math.round(calculatedMaxWidth / ratio);
+                    newWidthInput.dispatchEvent(new Event('input', { bubbles: true }));
+                } else if (currentHeight > calculatedMaxHeight) {
+                    newHeightInput.value = Math.round(calculatedMaxHeight);
+                    newWidthInput.value = Math.round(calculatedMaxHeight * ratio);
+                    newHeightInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            } else {
+                // 如果未锁定比例，分别检查并调整每个输入框
+                const currentWidth = parseFloat(newWidthInput.value);
+                const currentHeight = parseFloat(newHeightInput.value);
+
+                if (currentWidth > calculatedMaxWidth) {
+                    newWidthInput.value = Math.round(calculatedMaxWidth);
+                    newWidthInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+
+                if (currentHeight > calculatedMaxHeight) {
+                    newHeightInput.value = Math.round(calculatedMaxHeight);
+                    newHeightInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+
+            // Set the max attributes for the inputs
+            newWidthInput.max = Math.round(calculatedMaxWidth);
+            newHeightInput.max = Math.round(calculatedMaxHeight);
+
+            // Update disabled-up-arrow class based on the *current value* relative to its *newly calculated max*
+            updateArrowVisibility(newWidthInput);
+            updateArrowVisibility(newHeightInput);
+
+            // 更新当前比例值
+            if (document.querySelector('.tab-button.active').dataset.tab === 'percentageTab') {
+                currentWidthScale = Math.round((currentDesiredWidth / originalWidth) * 100);
+                currentHeightScale = Math.round((currentDesiredHeight / originalHeight) * 100);
+                widthScaleSlider.value = currentWidthScale;
+                heightScaleSlider.value = currentHeightScale;
+                updatePercentageSliders();
+            }
+        }
+
+        /**
+         * Updates the disabled-up-arrow class based on the input's current value and max attribute.
+         * @param {HTMLElement} inputElement - The pixel input element (newWidthInput or newHeightInput).
+         */
+        function updateArrowVisibility(inputElement) {
+            let currentValue = parseFloat(inputElement.value);
+            const minVal = parseFloat(inputElement.min);
+            const isWidth = inputElement.id === 'newWidth';
+            const isHeight = inputElement.id === 'newHeight';
+
+            if (isNaN(currentValue) || currentValue < minVal) {
+                currentValue = minVal;
+            }
+
+            const otherInput = isWidth ? newHeightInput : newWidthInput;
+            const otherValue = parseFloat(otherInput.value);
+
+            // 检查是否应该禁用向上箭头
+            let shouldDisableUpArrow = false;
+
+            // 检查三倍限制
+            const isTripleWidth = currentValue >= originalWidth * 3;
+            const isTripleHeight = currentValue >= originalHeight * 3;
+
+            if (aspectRatioLock.checked) {
+                // 锁定比例的情况
+                if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                    // 原图有维度超过4000的情况
+                    if (isWidth) {
+                        shouldDisableUpArrow = currentValue >= originalWidth;
+                    } else {
+                        shouldDisableUpArrow = currentValue >= originalHeight;
+                    }
+                } else {
+                    // 原图没有维度超过4000的情况
+                    if (isWidth) {
+                        // 对于宽度输入框，只有当当前值达到4000或三倍限制时才禁用
+                        shouldDisableUpArrow = currentValue >= MAX_OUTPUT_DIMENSION_ENLARGE || isTripleWidth;
+                    } else {
+                        // 对于高度输入框，只有当当前值达到4000或三倍限制时才禁用
+                        shouldDisableUpArrow = currentValue >= MAX_OUTPUT_DIMENSION_ENLARGE || isTripleHeight;
+                    }
+                }
+            } else {
+                // 未锁定比例的情况
+                if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                    // 原图有维度超过4000的情况
+                    if (isWidth && originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                        shouldDisableUpArrow = currentValue >= originalWidth;
+                    }
+                    if (isHeight && originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                        shouldDisableUpArrow = currentValue >= originalHeight;
+                    }
+                } else {
+                    // 原图没有维度超过4000的情况
+                    shouldDisableUpArrow = currentValue >= MAX_OUTPUT_DIMENSION_ENLARGE || 
+                                         (isWidth && isTripleWidth) || 
+                                         (isHeight && isTripleHeight);
+                }
+            }
+
+            // 检查是否应该禁用向下箭头
+            let shouldDisableDownArrow = false;
+            
+            if (aspectRatioLock.checked) {
+                // 锁定比例时，任一维度为1则禁用所有向下箭头
+                shouldDisableDownArrow = currentValue <= 1 || otherValue <= 1;
+            } else {
+                // 未锁定比例时，只禁用当前维度的向下箭头
+                shouldDisableDownArrow = currentValue <= 1;
+            }
+
+            // 更新按钮状态
+            const upButton = inputElement.parentElement.querySelector('.number-button.increase');
+            const downButton = inputElement.parentElement.querySelector('.number-button.decrease');
+
+            if (shouldDisableUpArrow) {
+                upButton.disabled = true;
+                upButton.classList.add('disabled');
+            } else {
+                upButton.disabled = false;
+                upButton.classList.remove('disabled');
+            }
+
+            if (shouldDisableDownArrow) {
+                downButton.disabled = true;
+                downButton.classList.add('disabled');
+            } else {
+                downButton.disabled = false;
+                downButton.classList.remove('disabled');
+            }
+        }
+
+
+        function calculateResizedDimensions() {
+            let targetWidth, targetHeight;
+
+            const activeTab = document.querySelector('.tab-button.active').dataset.tab;
+
+            if (activeTab === 'pixelTab') {
+                targetWidth = parseFloat(newWidthInput.value);
+                targetHeight = parseFloat(newHeightInput.value);
+
+                // Clamp to min value first
+                targetWidth = Math.max(MIN_PIXEL_DIMENSION, targetWidth);
+                targetHeight = Math.max(MIN_PIXEL_DIMENSION, targetHeight);
+
+                // Apply max limits from input attributes (which are dynamically updated by updatePixelInputLimits)
+                targetWidth = Math.min(targetWidth, parseFloat(newWidthInput.max) || Infinity);
+                targetHeight = Math.min(targetHeight, parseFloat(newHeightInput.max) || Infinity);
+                
+                // If aspect ratio is locked, re-adjust dimensions to maintain ratio, respecting new limits
+                if (aspectRatioLock.checked && originalWidth > 0 && originalHeight > 0) {
+                    const ratio = originalWidth / originalHeight;
+
+                    // Option 1: Adjust height based on current (potentially clamped) width
+                    let potentialHeightFromWidth = targetWidth / ratio;
+                    // Option 2: Adjust width based on current (potentially clamped) height
+                    let potentialWidthFromHeight = targetHeight * ratio;
+
+                    // If both dimensions hit their clamp, we might have slightly off ratio.
+                    // Prioritize the dimension that was the "limiting factor"
+                    if (targetWidth / originalWidth < targetHeight / originalHeight) { // Width was limited more
+                        targetHeight = potentialHeightFromWidth;
+                    } else { // Height was limited more or equal
+                        targetWidth = potentialWidthFromHeight;
+                    }
+                    
+                    // Final clamp after ratio adjustment to ensure no overshoot due to floating point or initial values
+                    targetWidth = Math.min(Math.max(MIN_PIXEL_DIMENSION, targetWidth), parseFloat(newWidthInput.max) || Infinity);
+                    targetHeight = Math.min(Math.max(MIN_PIXEL_DIMENSION, targetHeight), parseFloat(newHeightInput.max) || Infinity);
+                }
+            } else { // percentageTab
+                const widthScale = currentWidthScale / 100;
+                const heightScale = currentHeightScale / 100;
+                targetWidth = Math.round(originalWidth * widthScale);
+                targetHeight = Math.round(originalHeight * heightScale);
+
+                // Apply global pixel limits
+                let effectiveMaxWidth = Math.min(MAX_OUTPUT_DIMENSION_ENLARGE, originalWidth * MAX_SCALE_FACTOR_TRIPLE);
+                let effectiveMaxHeight = Math.min(MAX_OUTPUT_DIMENSION_ENLARGE, originalHeight * MAX_SCALE_FACTOR_TRIPLE);
+
+                if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                    effectiveMaxWidth = originalWidth;
+                }
+                if (originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                    effectiveMaxHeight = originalHeight;
+                }
+
+                if (targetWidth > effectiveMaxWidth || targetHeight > effectiveMaxHeight) {
+                    if (lockAspectRatioPercentage.checked) {
+                        // If aspect ratio is locked, scale down both dimensions proportionally
+                        const scaleFactorX = effectiveMaxWidth / targetWidth;
+                        const scaleFactorY = effectiveMaxHeight / targetHeight;
+                        const minScaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                        targetWidth = Math.round(originalWidth * widthScale * minScaleFactor);
+                        targetHeight = Math.round(originalHeight * heightScale * minScaleFactor);
+                    } else {
+                        // If aspect ratio is not locked, clamp each dimension independently
+                        targetWidth = Math.min(targetWidth, effectiveMaxWidth);
+                        targetHeight = Math.min(targetHeight, effectiveMaxHeight);
+                    }
+                }
+            }
+            
+            return { width: targetWidth, height: targetHeight };
+        }
+
+        function updatePreview() {
+            if (!originalImage) return;
+
+            previewCanvas.width = originalWidth; 
+            previewCanvas.height = originalHeight;
+            ctx.clearRect(0, 0, originalWidth, originalHeight);
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(originalImage, 0, 0, originalWidth, originalHeight); 
+
+            const { width: newWidth, height: newHeight } = calculateResizedDimensions();
+            currentDimensionsText.textContent = `Original Dimensions: ${originalWidth}x${originalHeight}px | Resized: ${Math.round(newWidth)}x${Math.round(newHeight)}px`;
+            
+            updateFullSizePreviewThumbnail();
+        }
+
+        function updateFullSizePreviewThumbnail() {
+            if (!originalImage) {
+                fullSizePreviewThumbnail.style.display = 'none';
+                return;
+            }
+            const { width: resizedWidth, height: resizedHeight } = calculateResizedDimensions();
+            
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            const maxThumbSize = 100;
+            let thumbWidth, thumbHeight;
+
+            if (resizedWidth > resizedHeight) {
+                thumbWidth = Math.min(resizedWidth, maxThumbSize);
+                thumbHeight = (thumbWidth / resizedWidth) * resizedHeight;
+            } else {
+                thumbHeight = Math.min(resizedHeight, maxThumbSize);
+                thumbWidth = (thumbHeight / resizedHeight) * resizedWidth;
+            }
+            
+            if (resizedWidth > 0 && resizedHeight > 0) {
+                if (thumbWidth < 10 && thumbWidth > 0) thumbWidth = 10;
+                if (thumbHeight < 10 && thumbHeight > 0) thumbHeight = 10;
+                if (thumbWidth === 0) thumbWidth = 1; 
+                if (thumbHeight === 0) thumbHeight = 1;
+            } else {
+                fullSizePreviewThumbnail.style.display = 'none';
+                return;
+            }
+
+            tempCanvas.width = thumbWidth;
+            tempCanvas.height = thumbHeight;
+            tempCtx.imageSmoothingEnabled = true;
+            tempCtx.imageSmoothingQuality = 'high';
+            tempCtx.drawImage(originalImage, 0, 0, originalImage.naturalWidth, originalImage.naturalHeight, 0, 0, tempCanvas.width, tempCanvas.height); 
+            
+            fullSizePreviewThumbnail.src = tempCanvas.toDataURL('image/png'); 
+            fullSizePreviewThumbnail.style.display = 'block';
+        }
+
+
+        function updatePercentageSliders() {
+            if (!originalImage) return;
+
+            // Calculate maximum allowed percentages based on pixel limits
+            const maxWidthPercentage = Math.min(300, (parseFloat(newWidthInput.max) / originalWidth) * 100);
+            const maxHeightPercentage = Math.min(300, (parseFloat(newHeightInput.max) / originalHeight) * 100);
+
+            // Update slider max values
+            widthScaleSlider.max = maxWidthPercentage.toFixed(1);
+            heightScaleSlider.max = maxHeightPercentage.toFixed(1);
+
+            // Update max percentage displays
+            widthMaxPercentage.textContent = `${maxWidthPercentage.toFixed(1)}%`;
+            heightMaxPercentage.textContent = `${maxHeightPercentage.toFixed(1)}%`;
+
+            // Update current percentage display
+            currentPercentageText.textContent = `Current Scale: Width ${currentWidthScale.toFixed(1)}% | Height ${currentHeightScale.toFixed(1)}%`;
+
+            // Show warning if either scale is above 100%
+            scaleWarning.style.display = (currentWidthScale > 100 || currentHeightScale > 100) ? 'block' : 'none';
+        }
+
+        function getImageDataForDownloadOrPreview() {
+            const format = outputFormatSelect.value;
+            const { width: finalWidth, height: finalHeight } = calculateResizedDimensions();
+
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+
+            tempCanvas.width = finalWidth;
+            tempCanvas.height = finalHeight;
+            tempCtx.imageSmoothingEnabled = true;
+            tempCtx.imageSmoothingQuality = 'high';
+            tempCtx.drawImage(originalImage, 0, 0, originalImage.naturalWidth, originalImage.naturalHeight, 0, 0, finalWidth, finalHeight);
+
+            return tempCanvas.toDataURL(format, 0.92); 
+        }
+
+        function downloadImage() {
+            const dataURL = getImageDataForDownloadOrPreview();
+            const format = outputFormatSelect.value;
+            const fileName = `resized_image_${Date.now()}`;
+
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = `${fileName}.${format.split('/')[1]}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function openFullSizePreview() {
+            const dataURL = getImageDataForDownloadOrPreview();
+            const newWindow = window.open();
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Full-Size Preview</title>
+                    <style>
+                        body { 
+                            margin: 0; 
+                            padding: 0; 
+                            overflow: scroll; 
+                            background-color: #f0f0f0; 
+
+                            ::-webkit-scrollbar { width: 12px; height: 12px; }
+                            ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+                            ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; border: 2px solid #f1f1f1; }
+                            ::-webkit-scrollbar-thumb:hover { background: #555; }
+                            scrollbar-width: thin; 
+                            scrollbar-color: #888 #f1f1f1; 
+                        }
+                        img { display: block; margin: 0 auto; max-width: none; max-height: none; }
+                    </style>
+                </head>
+                <body>
+                    <img src="${dataURL}" alt="Full size preview">
+                </body>
+                </html>
+            `);
+            newWindow.document.close();
+        }
+
+
+        // Initial setup
+        disableControls(); 
+        enableScale1.checked = true; 
+        enableScale2.checked = false;
+        updatePercentageSliders(); 
+        scaleWarning.style.display = 'none';
+        pixelScaleWarning.style.display = 'none'; 
+        fullSizePreviewBox.style.display = 'none'; 
+
+        // 修改页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化箭头按钮的点击和长按功能
+            setupArrowButtons();
+            // 初始化输入验证
+            setupInputValidation();
+            
+            // 其他初始化代码
+            if (originalImage) {
+                updatePixelInputLimits(parseFloat(newWidthInput.value), parseFloat(newHeightInput.value));
+                updatePreview();
+            }
+        });
+
+        // 修改 setupArrowButtons 函数
+        function setupArrowButtons() {
+            // 移除所有现有的事件监听器
+            const buttons = document.querySelectorAll('.number-button');
+            buttons.forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+            });
+
+            // 重新获取按钮并添加事件监听器
+            const newButtons = document.querySelectorAll('.number-button');
+            let pressTimer;
+            let isPressing = false;
+            let repeatInterval = 100;
+
+            newButtons.forEach(button => {
+                // 添加点击事件
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    if (this.disabled) return;
+                    
+                    const inputId = this.getAttribute('data-input');
+                    const input = document.getElementById(inputId);
+                    if (!input || input.disabled) return;
+                    
+                    const isIncrease = this.classList.contains('increase');
+                    const isWidth = inputId === 'newWidth';
+                    const currentValue = parseInt(input.value) || 0;
+                    const newValue = isIncrease ? currentValue + 1 : currentValue - 1;
+                    const minVal = parseInt(input.min) || 1;
+                    
+                    // 根据原图尺寸和是否锁定比例确定最大值
+                    let maxVal;
+                    if (aspectRatioLock.checked) {
+                        if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = isWidth ? originalWidth : originalHeight;
+                        } else {
+                            // 取两个维度的三倍限制和4000中的较小值
+                            const maxWidth = calculateMaxValue(true);
+                            const maxHeight = calculateMaxValue(false);
+                            maxVal = isWidth ? maxWidth : maxHeight;
+                        }
+                    } else {
+                        if (isWidth && originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = originalWidth;
+                        } else if (!isWidth && originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = originalHeight;
+                        } else {
+                            maxVal = calculateMaxValue(isWidth);
+                        }
+                    }
+                    
+                    if (newValue >= minVal && newValue <= maxVal) {
+                        input.value = newValue;
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                };
+
+                // 添加鼠标按下事件（长按功能）
+                button.onmousedown = function(e) {
+                    e.preventDefault();
+                    if (this.disabled) return;
+                    
+                    const inputId = this.getAttribute('data-input');
+                    const input = document.getElementById(inputId);
+                    if (!input || input.disabled) return;
+                    
+                    isPressing = true;
+                    const isIncrease = this.classList.contains('increase');
+                    const isWidth = inputId === 'newWidth';
+                    
+                    // 设置长按定时器
+                    pressTimer = setInterval(() => {
+                        if (isPressing) {
+                            const currentValue = parseInt(input.value) || 0;
+                            const newValue = isIncrease ? currentValue + 1 : currentValue - 1;
+                            const minVal = parseInt(input.min) || 1;
+                            
+                            // 根据原图尺寸和是否锁定比例确定最大值
+                            let maxVal;
+                            if (aspectRatioLock.checked) {
+                                if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                                    maxVal = isWidth ? originalWidth : originalHeight;
+                                } else {
+                                    // 取两个维度的三倍限制和4000中的较小值
+                                    const maxWidth = calculateMaxValue(true);
+                                    const maxHeight = calculateMaxValue(false);
+                                    maxVal = isWidth ? maxWidth : maxHeight;
+                                }
+                            } else {
+                                if (isWidth && originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                                    maxVal = originalWidth;
+                                } else if (!isWidth && originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                                    maxVal = originalHeight;
+                                } else {
+                                    maxVal = calculateMaxValue(isWidth);
+                                }
+                            }
+                            
+                            if (newValue >= minVal && newValue <= maxVal) {
+                                input.value = newValue;
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        }
+                    }, repeatInterval);
+                };
+
+                // 添加触摸事件支持
+                button.ontouchstart = function(e) {
+                    e.preventDefault();
+                    if (this.disabled) return;
+                    
+                    const inputId = this.getAttribute('data-input');
+                    const input = document.getElementById(inputId);
+                    if (!input || input.disabled) return;
+                    
+                    isPressing = true;
+                    const isIncrease = this.classList.contains('increase');
+                    const isWidth = inputId === 'newWidth';
+                    
+                    // 立即执行一次
+                    const currentValue = parseInt(input.value) || 0;
+                    const newValue = isIncrease ? currentValue + 1 : currentValue - 1;
+                    const minVal = parseInt(input.min) || 1;
+                    
+                    // 根据原图尺寸和是否锁定比例确定最大值
+                    let maxVal;
+                    if (aspectRatioLock.checked) {
+                        if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = isWidth ? originalWidth : originalHeight;
+                        } else {
+                            // 取两个维度的三倍限制和4000中的较小值
+                            const maxWidth = calculateMaxValue(true);
+                            const maxHeight = calculateMaxValue(false);
+                            maxVal = isWidth ? maxWidth : maxHeight;
+                        }
+                    } else {
+                        if (isWidth && originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = originalWidth;
+                        } else if (!isWidth && originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = originalHeight;
+                        } else {
+                            maxVal = calculateMaxValue(isWidth);
+                        }
+                    }
+                    
+                    if (newValue >= minVal && newValue <= maxVal) {
+                        input.value = newValue;
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                    
+                    // 设置长按定时器
+                    pressTimer = setInterval(() => {
+                        if (isPressing) {
+                            const currentValue = parseInt(input.value) || 0;
+                            const newValue = isIncrease ? currentValue + 1 : currentValue - 1;
+                            const minVal = parseInt(input.min) || 1;
+                            
+                            // 根据原图尺寸和是否锁定比例确定最大值
+                            let maxVal;
+                            if (aspectRatioLock.checked) {
+                                if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                                    maxVal = isWidth ? originalWidth : originalHeight;
+                                } else {
+                                    // 取两个维度的三倍限制和4000中的较小值
+                                    const maxWidth = calculateMaxValue(true);
+                                    const maxHeight = calculateMaxValue(false);
+                                    maxVal = isWidth ? maxWidth : maxHeight;
+                                }
+                            } else {
+                                if (isWidth && originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                                    maxVal = originalWidth;
+                                } else if (!isWidth && originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                                    maxVal = originalHeight;
+                                } else {
+                                    maxVal = calculateMaxValue(isWidth);
+                                }
+                            }
+                            
+                            if (newValue >= minVal && newValue <= maxVal) {
+                                input.value = newValue;
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        }
+                    }, repeatInterval);
+                };
+
+                // 鼠标和触摸的结束事件
+                const endPress = () => {
+                    isPressing = false;
+                    clearInterval(pressTimer);
+                };
+
+                button.onmouseup = endPress;
+                button.onmouseleave = endPress;
+                button.ontouchend = endPress;
+                button.ontouchcancel = endPress;
+            });
+        }
+
+        // 添加一个辅助函数来计算最大值
+        function calculateMaxValue(isWidth) {
+            const originalDimension = isWidth ? originalWidth : originalHeight;
+            const tripleOriginal = originalDimension * 3;
+            return Math.min(MAX_OUTPUT_DIMENSION_ENLARGE, tripleOriginal);
+        }
+
+        // 修改输入限制
+        function setupInputValidation() {
+            const inputs = [newWidthInput, newHeightInput];
+            
+            inputs.forEach(input => {
+                // 添加输入验证
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    if (!/^\d*$/.test(value)) {
+                        e.target.value = value.replace(/[^\d]/g, '');
+                        showTooltip('只能输入正整数', e.target);
+                    }
+                });
+
+                input.addEventListener('keypress', (e) => {
+                    if (!/^\d$/.test(e.key)) {
+                        e.preventDefault();
+                        showTooltip('只能输入正整数', e.target);
+                    }
+                });
+
+                // 添加失去焦点时的验证
+                input.addEventListener('blur', (e) => {
+                    const value = parseInt(e.target.value) || 0;
+                    const isWidth = e.target.id === 'newWidth';
+                    
+                    // 如果值为0，设置为1
+                    if (value === 0) {
+                        e.target.value = 1;
+                        e.target.dispatchEvent(new Event('input', { bubbles: true }));
+                        return;
+                    }
+
+                    // 计算允许的最大值
+                    let maxVal;
+                    if (aspectRatioLock.checked) {
+                        if (originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE || originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = isWidth ? originalWidth : originalHeight;
+                        } else {
+                            const maxWidth = calculateMaxValue(true);
+                            const maxHeight = calculateMaxValue(false);
+                            maxVal = isWidth ? maxWidth : maxHeight;
+                        }
+                    } else {
+                        if (isWidth && originalWidth > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = originalWidth;
+                        } else if (!isWidth && originalHeight > MAX_OUTPUT_DIMENSION_ENLARGE) {
+                            maxVal = originalHeight;
+                        } else {
+                            maxVal = calculateMaxValue(isWidth);
+                        }
+                    }
+
+                    // 如果值超过最大值，进行调整
+                    if (value > maxVal) {
+                        e.target.value = maxVal;
+                        e.target.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                });
+            });
+        }
+
+        // 显示提示框
+        function showTooltip(message, element) {
+            let tooltip = document.querySelector('.tooltip');
+            if (!tooltip) {
+                tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                document.body.appendChild(tooltip);
+            }
+
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.bottom + 5) + 'px';
+            tooltip.textContent = message;
+            tooltip.style.display = 'block';
+
+            setTimeout(() => {
+                tooltip.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
