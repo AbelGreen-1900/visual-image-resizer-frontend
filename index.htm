@@ -837,7 +837,7 @@
             if (url) {
                 try {
                     // 使用代理服务器加载图片
-                    const proxyUrl = `https://image-proxy-server-1lk4.onrender.com/image-proxy-server?url=${encodeURIComponent(url)}`;
+                    const proxyUrl = `https://image-proxy-server-1lk4.onrender.com/proxy-image?url=${encodeURIComponent(url)}`;
                     loadImage(proxyUrl);
                 } catch (error) {
                     displayMessage(errorMessage, 'Failed to load image from URL. Please check the URL and try again.', true);
